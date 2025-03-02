@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frutos Secos Online</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>VICPAU</h1>
+        <nav>
+            <ul>
+                <li><a href="#inicio">Inicio</a></li>
+                <li><a href="#productos">Productos</a></li>
+                <li><a href="#pedidos">Pedidos</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <section id="inicio" class="seccion">
+        <h2>Bienvenido a VICPAU tienda online</h2>
+        <p>Los mejores frutos secos a domicilio. Selecciona la pestaña de productos para ver nuestra oferta <br>ENCUENTRANOS EN INSTAGRAM COMO vicpau_pedidos_la_victoria<br>.</p>
+    </section>
+    
+    <section id="productos" class="seccion" style="display: none;">
+        <h2>Nuestros Productos</h2>
+        <div class="productos">
+            <div class="producto" data-nombre="Almendras" data-precio="15">
+                <h3>Almendras</h3>
+                <p>Precio: S/15/kg</p>
+                <input type="number" class="cantidad" placeholder="Cantidad (g)" min="1">
+                <button class="agregar">Agregar</button>
+            </div>
+            <div class="producto" data-nombre="Nueces" data-precio="20">
+                <h3>Nueces</h3>
+                <p>Precio: S/20/kg</p>
+                <input type="number" class="cantidad" placeholder="Cantidad (g)" min="1">
+                <button class="agregar">Agregar</button>
+            </div>
+            <div class="producto" data-nombre="Pasas" data-precio="10">
+                <h3>Pasas</h3>
+                <p>Precio: S/10/kg</p>
+                <input type="number" class="cantidad" placeholder="Cantidad (g)" min="1">
+                <button class="agregar">Agregar</button>
+            </div>
+            <div class="producto" data-nombre="Gindones" data-precio="18">
+                <h3>Gindones</h3>
+                <p>Precio: S/18/kg</p>
+                <input type="number" class="cantidad" placeholder="Cantidad (g)" min="1">
+                <button class="agregar">Agregar</button>
+            </div>
+            <div class="producto" data-nombre="Maní" data-precio="8">
+                <h3>Maní</h3>
+                <p>Precio: S/8/kg</p>
+                <input type="number" class="cantidad" placeholder="Cantidad (g)" min="1">
+                <button class="agregar">Agregar</button>
+            </div>
+            <div class="producto" data-nombre="Pecanas" data-precio="25">
+                <h3>Pecanas</h3>
+                <p>Precio: S/25/kg</p>
+                <input type="number" class="cantidad" placeholder="Cantidad (g)" min="1">
+                <button class="agregar">Agregar</button>
+            </div>
+        </div>
+    </section>
+    
+    <section id="pedidos" class="seccion" style="display: none;">
+        <h2>Carrito de Compras</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Precio (S/)</th>
+                    <th>Cantidad (g)</th>
+                    <th>Total (S/)</th>
+                </tr>
+            </thead>
+            <tbody id="lista-carrito"></tbody>
+        </table>
+        <p>Total General: S/<span id="total">0</span></p>
+        <input type="text" id="direccion" placeholder="Ingresa tu dirección">
+        <button id="comprar">Comprar</button>
+    </section>
+    
+    <script>
+        document.querySelectorAll("nav ul li a").forEach(link => {
+            link.addEventListener("click", function(event) {
+                event.preventDefault();
+                let target = this.getAttribute("href").substring(1);
+                document.querySelectorAll(".seccion").forEach(section => {
+                    section.style.display = "none";
+                });
+                document.getElementById(target).style.display = "block";
+            });
+        });
+        
+        document.querySelectorAll(".agregar").forEach(button => {
+            button.addEventListener("click", function() {
+                let producto = this.parentElement;
+                let nombre = producto.getAttribute("data-nombre");
+                let precio = parseFloat(producto.getAttribute("data-precio"));
+                let cantidadInput = producto.querySelector(".cantidad");
+                let cantidad = cantidadInput.value;
+
+                if (cantidad && cantidad > 0) {
+                    let total = (precio * cantidad) / 1000;
+                    let fila = `<tr><td>${nombre}</td><td>${precio}</td><td>${cantidad}</td><td>${total.toFixed(2)}</td></tr>`;
+                    document.getElementById("lista-carrito").innerHTML += fila;
+
+                    let totalGeneral = parseFloat(document.getElementById("total").textContent);
+                    totalGeneral += total;
+                    document.getElementById("total").textContent = totalGeneral.toFixed(2);
+
+                    cantidadInput.value = "";
+                } else {
+                    alert("Ingrese una cantidad válida");
+                }
+            });
+        });
+        
+        document.getElementById("comprar").addEventListener("click", function() {
+            let direccion = document.getElementById("direccion").value;
+            let total = document.getElementById("total").textContent;
+            let pedido = "";
+            document.querySelectorAll("#lista-carrito tr").forEach(row => {
+                pedido += row.innerText + "\n";
+            });
+            
+            if (direccion.trim() === "" || pedido.trim() === "") {
+                alert("Debe ingresar una dirección y agregar productos al carrito");
+                return;
+            }
+            
+            let correo = "techygomezerazo@gmail.com";
+            let asunto = "Pedido de Frutos Secos";
+            let cuerpo = `Dirección: ${direccion}\n\nPedido:\n${pedido}\n\nTotal: S/${total}`;
+            window.location.href = `mailto:${correo}?subject=${encodeURIComponent(asunto)}&body=${encodeURIComponent(cuerpo)}`;
+        });
+        </script>
+</body>
+</html>
